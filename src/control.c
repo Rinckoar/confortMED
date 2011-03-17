@@ -4,9 +4,6 @@
 #include "confortmed_glcd.c"
 #include <graphics.c>
 
-
-
-
 /*********************************************
  *  		ADC CONTROL		     *
  ********************************************/		
@@ -66,20 +63,12 @@ void show_values(sensor s)
 	char voltage[5];
    	int i;	
 	for(i=0;i<NCH;i++){
-	sprintf(voltage, "%u",s[i].x); // Converts adc to text
-   	glcd_text57(s[i].x, s[i].y, voltage, 1, ON);            // Write the new voltage
+	sprintf(voltage, "%.2f",(float) s[i].adc*5.0/1023.0); // Converts adc to text
+	glcd_rect(s[i].x,s[i].y,s[i].x+15,s[i].y+10, YES, OFF);
+	glcd_text57(s[i].x, s[i].y, voltage, 1, ON);            // Write the new voltage
 
 	}
 }
-
-
-
-
-
-
-
-
-
 
 /*********************************************
  *  		EEPROM CONTROL		     *
@@ -98,6 +87,14 @@ void read_eeprom(sensor s)
 	}
 }
 
+void write_eeprom(sensor s)
+{
+	unsigned int i;
 
+	for(i=0;i<NCH;i++){
+		write_float_eeprom(8*i,s[i].m);
+		write_float_eeprom(8*i+4,s[i].b);	
+	}
+}
 
 

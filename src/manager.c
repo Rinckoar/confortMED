@@ -1,5 +1,5 @@
 
-
+#include "control.c"
 
 /*********************************************
  *  		MANAGER INIT		     *
@@ -12,7 +12,7 @@ static int1 set_sensor_values(sensor s)
 {
 	int1 retval=0;
 
-	s[0].x=42;
+	s[0].x=45;
 	s[0].y=0;
 	s[0].rx=64;
 	s[0].ry=18;
@@ -69,6 +69,10 @@ int1 manager_init(sensor s)
 	return retval;
 }
 
-
+void main_menu(sensor s)
+{
+	get_adc(s);
+	show_values(s);
+}
 
 

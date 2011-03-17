@@ -19,7 +19,6 @@
 
 
 #include "confortMED.h"
-#include "control.c"
 #include "manager.c"
 #include <stdlibm.h>
 
@@ -34,8 +33,6 @@ unsigned int main_mode;
 
 //		RB INTERRUPT 
 //-------------------------------------------	
-
-
 #INT_RB
 void Interrupcion_RB()
 {
@@ -59,8 +56,6 @@ void Interrupcion_RB()
 	}
   	#asm movf PORTB,0 #endasm				
 }
-
-
 
 
 /*********************************************
@@ -132,7 +127,6 @@ static void main_error(int er)
 	glcd_fillScreen(OFF);
 }
 
-
 //		MAIN 
 //-------------------------------------------	
 void main(void)
@@ -144,8 +138,7 @@ void main(void)
 	
 	while(1){
 		
-		show_values(s);
-
+		main_menu(s);
 
 	}
 
@@ -155,9 +148,4 @@ void main(void)
 error:
 	main_error(er);
 }
-
-
-
-
-
 
