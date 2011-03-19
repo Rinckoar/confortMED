@@ -38,7 +38,7 @@
 #define AREA		71.480343488
 
 typedef struct {
-	int x,y,rx,ry;
+	int x,y,rx,ry,oldr;
 	long adc;
 	float m,b;
 }_sensor;

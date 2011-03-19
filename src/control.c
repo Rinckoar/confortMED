@@ -1,5 +1,3 @@
-
-
 #include <internal_eeprom.c>
 #include "confortmed_glcd.c"
 #include <graphics.c>
@@ -60,15 +58,34 @@ unsigned int set_lcd(unsigned int mode)
 void show_values(sensor s)
 {
 	
-	char voltage[5];
-   	int i;	
+	char voltage[9];
+	float temp=0;
+	
+   	unsigned int i,r;	
 	for(i=0;i<NCH;i++){
-	sprintf(voltage, "%.2f",(float) s[i].adc*5.0/1023.0); // Converts adc to text
-	glcd_rect(s[i].x,s[i].y,s[i].x+15,s[i].y+10, YES, OFF);
-	glcd_text57(s[i].x, s[i].y, voltage, 1, ON);            // Write the new voltage
-
+		
+		sprintf(voltage, "%.2f",(float) s[i].adc*5.0/1023.0); 
+		
+		temp= (float) s[i].adc/1023.0;
+		if(temp < 0.25)
+			r=2;
+		if((temp >= 0.25) & (temp < 0.5))
+			r=4;
+		if((temp >= 0.5) & (temp < 0.75))
+			r=6;
+		if(temp >= 0.75)
+			r=8;
+		
+		glcd_rect(s[i].x,s[i].y,s[i].x + 35,s[i].y + 7,YES,OFF);
+		glcd_circle(s[i].rx,s[i].ry,s[i].oldr,YES,OFF);
+		glcd_circle(s[i].rx,s[i].ry,r,YES,ON);
+		glcd_text57(s[i].x, s[i].y, voltage,1,ON); 
+		s[i].oldr=r;
 	}
 }
+
+
+
 
 /*********************************************
  *  		EEPROM CONTROL		     *
