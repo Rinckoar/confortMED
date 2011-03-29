@@ -27,6 +27,17 @@ void get_adc(sensor s)
 	}
 }
 
+float adc_2_pressure(long adc,float m,float b,unsigned int units)
+{
+	float p;
+
+	p=(adc*5/1023)*m+b;
+	if(units==KPA)
+		return p;
+	
+	return p*KPA2MMHG;
+}
+
 /*********************************************
  *  		GLCD CONTROL		     *
  ********************************************/		
@@ -53,18 +64,20 @@ unsigned int set_lcd(unsigned int mode)
 	return mode;
 }
 
-//	PRINT VALUES IN GLCDSET LCD ON/OFF
+//	PRINT VALUES IN GLCD 
 //-------------------------------------------	
-void show_values(sensor s)
+void show_values(sensor s,unsigned int units)
 {
 	
-	char voltage[9];
+	char value[9];
 	float temp=0;
 	
    	unsigned int i,r;	
 	for(i=0;i<NCH;i++){
+
 		
-		sprintf(voltage, "%.2f",(float) s[i].adc*5.0/1023.0); 
+		
+		sprintf(value, "%.2f",adc_2_pressure(s[i].adc,s[i].m,s[i].b,units)); 
 		
 		temp= (float) s[i].adc/1023.0;
 		if(temp < 0.25)
@@ -79,7 +92,7 @@ void show_values(sensor s)
 		glcd_rect(s[i].x,s[i].y,s[i].x + 35,s[i].y + 7,YES,OFF);
 		glcd_circle(s[i].rx,s[i].ry,s[i].oldr,YES,OFF);
 		glcd_circle(s[i].rx,s[i].ry,r,YES,ON);
-		glcd_text57(s[i].x, s[i].y, voltage,1,ON); 
+		glcd_text57(s[i].x, s[i].y, value,1,ON); 
 		s[i].oldr=r;
 	}
 }
@@ -94,7 +107,7 @@ void show_values(sensor s)
 //		READ VALUES FROM EEPROM
 //-------------------------------------------	
 
-void read_eeprom(sensor s)
+void read_from_eeprom(sensor s)
 {
 	unsigned int i;
 
@@ -102,9 +115,12 @@ void read_eeprom(sensor s)
 		s[i].m=read_float_eeprom(8*i);
 		s[i].b=read_float_eeprom(8*i+4);	
 	}
+
+	
 }
 
-void write_eeprom(sensor s)
+
+void write_2_eeprom(sensor s)
 {
 	unsigned int i;
 

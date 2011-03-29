@@ -16,14 +16,12 @@
  *			       	  2010                                        *
  *---------------------------------------------------------------------------*/
 
-
-
 #include "confortMED.h"
 #include "manager.c"
 #include <stdlibm.h>
 
 sensor s;
-unsigned int main_mode;
+unsigned int main_mode,units;
 
 
 
@@ -47,11 +45,10 @@ void Interrupcion_RB()
 				PORTE=main_mode;
 			      	break;
 		      }
-	/*	case 2:{					
-				
-			      
-			      
-		      }*/
+		case 2:{					
+				if(main_mode==MAIN_ON)
+					units=~units;
+		      }
 
 	}
   	#asm movf PORTB,0 #endasm				
@@ -76,8 +73,6 @@ static signed int main_init()
 	PORTE=0xFF;
 	PORTB=0x00;
 
-
-	
 	s=(sensor)malloc(4*sizeof(_sensor));
 	if(s==NULL){	
 		check=-1;
@@ -99,6 +94,7 @@ exit:
 		ext_int_edge(L_TO_H);			
 		enable_interrupts(global);
 		main_mode=MAIN_OFF;
+		units=KPA;
 		PORTE=MAIN_OFF;
 		return check;
 	}
@@ -138,7 +134,7 @@ void main(void)
 	
 	while(1){
 		
-		main_menu(s);
+		main_menu(s,units);
 	}
 
 

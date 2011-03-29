@@ -11,6 +11,7 @@ static int1 set_sensor_values(sensor s)
 {
 	int1 retval=0;
 
+
 	s[0].x=20;
 	s[0].y=10;
 	s[0].rx=64;
@@ -51,7 +52,8 @@ static int1 set_sensor_values(sensor s)
 		goto exit;
 	}
 
-	read_eeprom(s);
+	read_from_eeprom(s);
+
 exit:
 	return retval;
 }
@@ -62,8 +64,14 @@ int1 manager_init(sensor s)
 {
 
 	int1 retval=0;
+	int i;
 
 	set_adc();
+	
+	for(i=0;i<NCH;i++){
+		write_float_eeprom(8*i,1);
+		write_float_eeprom(8*i+4,0);	
+	}
 	
 	if(set_sensor_values(s)){
 		retval=1;
@@ -72,10 +80,22 @@ int1 manager_init(sensor s)
 	return retval;
 }
 
-void main_menu(sensor s)
+void main_menu(sensor s,unsigned int units)
 {
+	char u[9];
+
 	get_adc(s);
-	show_values(s);
+	show_values(s,units);
+	if(units==KPA)
+		sprintf(u,"kPa"); 
+	else
+		sprintf(u,"mmHg"); 
+	
+	glcd_rect(5,54,30,62,YES,OFF);
+	glcd_text57(5,54, u,1,ON); 
+
+	
+
 }
 
 
