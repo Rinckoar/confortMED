@@ -33,6 +33,7 @@
 #define MAIN_OFF	6
 #define MAIN_ON		5
 #define MAIN_PAUSE	3
+#define MAIN_CALIB	0
 
 #define KPA2MMHG	7.50061561	
 #define AREA		71.480343488

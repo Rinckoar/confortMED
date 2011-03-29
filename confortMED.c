@@ -67,6 +67,11 @@ void Interrupcion_RB()
 					units=~units;
 					break;
 				}
+				if(main_mode==MAIN_OFF){
+					main_mode=MAIN_CALIB;
+					PORTE=main_mode;
+					break;
+				}
 		      }
 
 	}
@@ -110,7 +115,7 @@ exit:
 		delay_ms(1000);
 		enable_interrupts(int_RB);				
 		ext_int_edge(L_TO_H);	
-		enable_interrupts(INT_EXT);
+		enable_interrupts(int_EXT);
 		enable_interrupts(global);
 		main_mode=MAIN_OFF;
 		units=KPA;
@@ -153,10 +158,16 @@ void main(void)
 	
 	while(1){
 		
-		main_menu(s,units);
+		if(main_mode==MAIN_ON)
+			main_menu(s,units);
 		
 		while(main_mode==MAIN_PAUSE){
 		}
+		while(main_mode==MAIN_CALIB){
+			main_mode=calib_menu(s);
+			PORTE=main_mode;
+		}
+
 	}
 
 
