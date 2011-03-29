@@ -93,9 +93,9 @@ void main_menu(sensor s,unsigned int units)
 	
 	glcd_rect(5,54,30,62,YES,OFF);
 	glcd_text57(5,54, u,1,ON); 
-
-	
-
 }
+
+
+
 
 

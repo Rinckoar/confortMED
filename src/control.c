@@ -52,12 +52,10 @@ unsigned int set_lcd(unsigned int mode)
 		x=OFF;
 		mode=MAIN_OFF;
 		glcd_fillScreen(OFF);
-		disable_interrupts(INT_EXT);
 	}
 	else{
 		x=ON;
 		mode=MAIN_ON;
-		enable_interrupts(INT_EXT);
 	}
 	
 	glcd_init(x);
@@ -115,11 +113,10 @@ void read_from_eeprom(sensor s)
 		s[i].m=read_float_eeprom(8*i);
 		s[i].b=read_float_eeprom(8*i+4);	
 	}
-
-	
 }
 
-
+//		WRITE VALUES TO EEPROM
+//-------------------------------------------	
 void write_2_eeprom(sensor s)
 {
 	unsigned int i;

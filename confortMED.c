@@ -29,6 +29,23 @@ unsigned int main_mode,units;
  *  		INTERRUPTS		     *
  ********************************************/		
 
+//		EXT INTERRUPT 
+//-------------------------------------------	
+#int_EXT
+void ext()
+{ 
+	if(main_mode==MAIN_ON){
+		main_mode=MAIN_PAUSE;
+		PORTE=MAIN_PAUSE;
+		return;
+	}
+	if(main_mode==MAIN_PAUSE){
+		main_mode=MAIN_ON;
+		PORTE=MAIN_ON;
+		return;
+	}
+}
+
 //		RB INTERRUPT 
 //-------------------------------------------	
 #INT_RB
@@ -46,14 +63,15 @@ void Interrupcion_RB()
 			      	break;
 		      }
 		case 2:{					
-				if(main_mode==MAIN_ON)
+				if(main_mode==MAIN_ON){
 					units=~units;
+					break;
+				}
 		      }
 
 	}
   	#asm movf PORTB,0 #endasm				
 }
-
 
 /*********************************************
  *  		  MAIN CODE		     *
@@ -91,7 +109,8 @@ exit:
 		PORTE=0;
 		delay_ms(1000);
 		enable_interrupts(int_RB);				
-		ext_int_edge(L_TO_H);			
+		ext_int_edge(L_TO_H);	
+		enable_interrupts(INT_EXT);
 		enable_interrupts(global);
 		main_mode=MAIN_OFF;
 		units=KPA;
@@ -135,6 +154,9 @@ void main(void)
 	while(1){
 		
 		main_menu(s,units);
+		
+		while(main_mode==MAIN_PAUSE){
+		}
 	}
 
 
