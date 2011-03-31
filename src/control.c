@@ -29,9 +29,11 @@ void get_adc(sensor s)
 
 float adc_2_pressure(long adc,float m,float b,unsigned int units)
 {
-	float p;
+	float p,v,w;
 
-	p=(adc*5/1023)*m+b;
+	v=(float) adc*5.0/1023.0;
+	w= (v-b)/m;
+	p=(w/AREA)*GR2KPA;	
 	if(units==KPA)
 		return p;
 	

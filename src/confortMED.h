@@ -29,7 +29,7 @@
 #endif
 
 #define NCH	4
-#define NKVAL 	10
+#define NKVAL 	6
 
 #define MMHG 	1
 #define KPA 	0

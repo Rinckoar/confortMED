@@ -22,7 +22,7 @@ float counter(float count)
 	return count;
 
 }
-/*
+
 void set_calib_values(sensor s,unsigned int index)
 {
 	unsigned int j;
@@ -37,9 +37,9 @@ void set_calib_values(sensor s,unsigned int index)
 			v=(float) s[index].adc*5/1023;
 			w=counter(w);
 			glcd_rect(0,10,90,30,YES,OFF);
-			sprintf(test,"X[%d]= %.1f V",j+1,v);
+			sprintf(test,"X[%d]= %.1f gr",j+1,w);
 			glcd_text57(0,10, test,1,ON);
-			sprintf(test,"Y[%d]= %.1f gr ",j+1,w);
+			sprintf(test,"Y[%d]= %.1f V ",j+1,v);
 			glcd_text57(0,20, test,1,ON);
 		}
 		load[j]=w;
@@ -47,7 +47,7 @@ void set_calib_values(sensor s,unsigned int index)
 		delay_ms(600);
 	}
 }
-*/
+/*
 void set_calib_values(sensor s,unsigned int index)
 {
 	load[0]=198;
@@ -72,8 +72,22 @@ void set_calib_values(sensor s,unsigned int index)
 	voltage[8]=2.7;
 	voltage[9]=2.8;
 
-}
+	load[0]=0;
+	load[1]=10;
+	load[2]=20;
+	load[3]=30;
+	load[4]=40;
+	load[5]=50;
 
+	voltage[0]=0;
+	voltage[1]=1;
+	voltage[2]=2;
+	voltage[3]=3;
+	voltage[4]=4;
+	voltage[5]=5;
+
+}
+*/
 
 void linear_reg(sensor s,unsigned int index)
 {
@@ -263,10 +277,6 @@ done:
 exit:
 
 	return -1;
-
-
-
-
 }
 
 
