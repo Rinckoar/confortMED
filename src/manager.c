@@ -100,7 +100,8 @@ unsigned int calib_menu(sensor s)
 {
 	char test[50];
 	unsigned int op,j;
-	signed int retval;
+
+
 intro:
 	disable_interrupts(int_EXT);	
 	disable_interrupts(int_RB);
@@ -173,7 +174,7 @@ two:
 three:
 	glcd_fillScreen(OFF);   
 	sprintf(test,"Fin del Menu");
-	glcd_text57(10,10, test,1,ON);
+	glcd_text57(30,30, test,1,ON);
 	delay_ms(1000);
 	goto exit;
 
@@ -182,11 +183,12 @@ three:
 
 calib_sen:
 
-	if(sensor_calibration()<0)
+	if(sensor_calibration(s)<0){
 		goto intro;
-	else
+	}
+	else{
 		goto three;
-
+	}
 
 calib_off:
 

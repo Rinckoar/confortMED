@@ -117,14 +117,10 @@ void read_from_eeprom(sensor s)
 
 //		WRITE VALUES TO EEPROM
 //-------------------------------------------	
-void write_2_eeprom(sensor s)
+void write_2_eeprom(sensor s,unsigned int index)
 {
-	unsigned int i;
-
-	for(i=0;i<NCH;i++){
-		write_float_eeprom(8*i,s[i].m);
-		write_float_eeprom(8*i+4,s[i].b);	
-	}
+	write_float_eeprom(8*index,s[index].m);
+	write_float_eeprom(8*index+4,s[index].b);	
 }
 
 
