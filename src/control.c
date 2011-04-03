@@ -77,7 +77,7 @@ void show_values(sensor s,unsigned int units)
 
 		
 		
-		sprintf(value, "%.2f",adc_2_pressure(s[i].adc,s[i].m,s[i].b,units)); 
+		sprintf(value,"%.2f",adc_2_pressure(s[i].adc,s[i].m,s[i].b,units)); 
 		
 		temp= (float) s[i].adc/1023.0;
 		if(temp < 0.25)
@@ -96,9 +96,6 @@ void show_values(sensor s,unsigned int units)
 		s[i].oldr=r;
 	}
 }
-
-
-
 
 /*********************************************
  *  		EEPROM CONTROL		     *

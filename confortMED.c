@@ -130,7 +130,7 @@ exit:
 static void main_error(int er)
 {
 	char H[]="ALLOCATION ERROR";
-	char H1[]="CHARGING INTERNAL \n     VALUES ERROR";
+	char H1[]="LOADING INTERNAL \n     VALUES ERROR";
 
 	glcd_init(ON);
 	switch(er){

@@ -39,6 +39,8 @@
 #define MAIN_PAUSE	3
 #define MAIN_CALIB	0
 
+#define MAXERROR	0.2
+
 #define KPA2MMHG	7.50061561
 #define GR2KPA		9.807
 #define AREA		71.480343488

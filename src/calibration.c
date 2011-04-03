@@ -2,7 +2,7 @@
 #include <stdlibm.h>
 
 float *voltage,*load;
-char test[50];
+char text[50];
 
 float counter(float count)
 {
@@ -37,10 +37,10 @@ void set_calib_values(sensor s,unsigned int index)
 			v=(float) s[index].adc*5/1023;
 			w=counter(w);
 			glcd_rect(0,10,90,30,YES,OFF);
-			sprintf(test,"X[%d]= %.1f gr",j+1,w);
-			glcd_text57(0,10, test,1,ON);
-			sprintf(test,"Y[%d]= %.1f V ",j+1,v);
-			glcd_text57(0,20, test,1,ON);
+			sprintf(text,"X[%d]= %.1f gr",j+1,w);
+			glcd_text57(0,10, text,1,ON);
+			sprintf(text,"Y[%d]= %.1f V ",j+1,v);
+			glcd_text57(0,20, text,1,ON);
 		}
 		load[j]=w;
 		voltage[j]=v;
@@ -121,20 +121,20 @@ void linear_reg(sensor s,unsigned int index)
 	s[index].b=b0;
 
 	glcd_fillScreen(OFF);  
-	sprintf(test,"Sensor # %d",index+1);
-	glcd_text57(0,0, test,1,ON); 
-	sprintf(test,"R=%.3f",r);
-	glcd_text57(20,30, test,1,ON); 
-	sprintf(test,"m=%.3f",s[index].m);
-	glcd_text57(20,40, test,1,ON); 
-	sprintf(test,"b=%.3f",s[index].b);
-	glcd_text57(20,50, test,1,ON); 
+	sprintf(text,"Sensor # %d",index+1);
+	glcd_text57(0,0, text,1,ON); 
+	sprintf(text,"R=%.3f",r);
+	glcd_text57(20,30, text,1,ON); 
+	sprintf(text,"m=%.3f",s[index].m);
+	glcd_text57(20,40, text,1,ON); 
+	sprintf(text,"b=%.3f",s[index].b);
+	glcd_text57(20,50, text,1,ON); 
 	delay_ms(5000);
 	
 	write_2_eeprom(s,index);
 }
 
-signed int sensor_calibration(sensor s)
+void sensor_calibration(sensor s)
 {
 	unsigned int k=0,op=0;
 
@@ -142,30 +142,31 @@ signed int sensor_calibration(sensor s)
 	load=(float *)malloc(NKVAL*sizeof(float));
 	if((voltage==NULL) || (load==NULL))	
 		goto exit;
+	
 
 intro:	
 	glcd_fillScreen(OFF);   
-	sprintf(test,"Elegir Sensor");
-	glcd_text57(10,0, test,1,ON); 
-	sprintf(test,"1-> Siguiente.");
-	glcd_text57(10,30, test,1,ON); 
-	sprintf(test,"2-> Ejecutar."); 
-	glcd_text57(10,40, test,1,ON);
-	sprintf(test,"3-> Atras."); 
-	glcd_text57(10,50, test,1,ON);
+	sprintf(text,"Elegir Sensor");
+	glcd_text57(10,0, text,1,ON); 
+	sprintf(text,"1-> Siguiente.");
+	glcd_text57(10,30, text,1,ON); 
+	sprintf(text,"2-> Ejecutar."); 
+	glcd_text57(10,40, text,1,ON);
+	sprintf(text,"3-> Atras."); 
+	glcd_text57(10,50, text,1,ON);
 	if(k<NCH){
-		sprintf(test,"Sensor %d",k+1);
-		glcd_text57(20,15, test,1,ON); 
+		sprintf(text,"Sensor %d",k+1);
+		glcd_text57(20,15, text,1,ON); 
 	}
 	else{
-		sprintf(test,"Todos",);
-		glcd_text57(20,15, test,1,ON);
+		sprintf(text,"Todos");
+		glcd_text57(20,15, text,1,ON);
 	}
-
+	op=0;
 
 command:	
 	
-	delay_ms(500);
+	delay_ms(200);
 	while(op==0){
 		op=swap( PORTB & 0b00110001);	
 	}
@@ -173,6 +174,8 @@ command:
 		goto exit;
 	if((op==16)){
 		k++;
+		if(k>NCH)
+			k=0;
 		op=0;
 		goto intro;
 	}
@@ -200,85 +203,147 @@ command:
 		}
 	}
 
-
 s0:
 	glcd_fillScreen(OFF);   
-	sprintf(test,"Sensor # 1");
-	glcd_text57(0,0, test,1,ON); 
-	sprintf(test,"1-> Incre.");
-	glcd_text57(0,35, test,1,ON); 
-	sprintf(test,"2-> Decre."); 
-	glcd_text57(0,45, test,1,ON);
-	sprintf(test,"3-> Acep."); 
-	glcd_text57(0,55, test,1,ON);
+	sprintf(text,"Sensor # 1");
+	glcd_text57(0,0, text,1,ON); 
+	sprintf(text,"1-> Incre.");
+	glcd_text57(0,35, text,1,ON); 
+	sprintf(text,"2-> Decre."); 
+	glcd_text57(0,45, text,1,ON);
+	sprintf(text,"3-> Acep."); 
+	glcd_text57(0,55, text,1,ON);
 	delay_ms(300);
 	
 	set_calib_values(s,0);
 	linear_reg(s,0);
-	if(k<NCH)
-		goto done;
-
+	if(k<NCH){
+		k=0;
+		goto intro;
+	}
 s1:
 	glcd_fillScreen(OFF);   
-	sprintf(test,"Sensor # 2");
-	glcd_text57(0,0, test,1,ON); 
-	sprintf(test,"1-> Incre.");
-	glcd_text57(0,35, test,1,ON); 
-	sprintf(test,"2-> Decre."); 
-	glcd_text57(0,45, test,1,ON);
-	sprintf(test,"3-> Acep."); 
-	glcd_text57(0,55, test,1,ON);
+	sprintf(text,"Sensor # 2");
+	glcd_text57(0,0, text,1,ON); 
+	sprintf(text,"1-> Incre.");
+	glcd_text57(0,35, text,1,ON); 
+	sprintf(text,"2-> Decre."); 
+	glcd_text57(0,45, text,1,ON);
+	sprintf(text,"3-> Acep."); 
+	glcd_text57(0,55, text,1,ON);
 	delay_ms(300);
 	
 	set_calib_values(s,1);
 	linear_reg(s,1);
-	if(k<NCH)
-		goto done;
+	if(k<NCH){
+		k=0;
+		goto intro;
+	}
 
 s2:
 	glcd_fillScreen(OFF);   
-	sprintf(test,"Sensor # 3");
-	glcd_text57(0,0, test,1,ON); 
-	sprintf(test,"1-> Incre.");
-	glcd_text57(0,35, test,1,ON); 
-	sprintf(test,"2-> Decre."); 
-	glcd_text57(0,45, test,1,ON);
-	sprintf(test,"3-> Acep."); 
-	glcd_text57(0,55, test,1,ON);
+	sprintf(text,"Sensor # 3");
+	glcd_text57(0,0, text,1,ON); 
+	sprintf(text,"1-> Incre.");
+	glcd_text57(0,35, text,1,ON); 
+	sprintf(text,"2-> Decre."); 
+	glcd_text57(0,45, text,1,ON);
+	sprintf(text,"3-> Acep."); 
+	glcd_text57(0,55, text,1,ON);
 	delay_ms(300);
 	
 	set_calib_values(s,2);
 	linear_reg(s,2);
-	if(k<NCH)
-		goto done;
-
+	if(k<NCH){
+		k=0;
+		goto intro;
+	}
 s3:
 	glcd_fillScreen(OFF);   
-	sprintf(test,"Sensor # 4");
-	glcd_text57(0,0, test,1,ON); 
-	sprintf(test,"1-> Incre.");
-	glcd_text57(0,35, test,1,ON); 
-	sprintf(test,"2-> Decre."); 
-	glcd_text57(0,45, test,1,ON);
-	sprintf(test,"3-> Acep."); 
-	glcd_text57(0,55, test,1,ON);
+	sprintf(text,"Sensor # 4");
+	glcd_text57(0,0, text,1,ON); 
+	sprintf(text,"1-> Incre.");
+	glcd_text57(0,35, text,1,ON); 
+	sprintf(text,"2-> Decre."); 
+	glcd_text57(0,45, text,1,ON);
+	sprintf(text,"3-> Acep."); 
+	glcd_text57(0,55, text,1,ON);
 	delay_ms(300);
 	
 	set_calib_values(s,3);
 	linear_reg(s,3);
-	if(k<NCH)
-		goto done;
-
-done:
+	k=0;
+	goto intro;
+exit:
 	free(voltage);
 	free(load);
+}
+
+unsigned int test_calib(sensor s)
+{
+
+	unsigned int op,k,i,j;
+	unsigned int status[4]={0 0 0 0};
+	float v,error;
+
+intro:	
+	glcd_fillScreen(OFF);   
+	sprintf(text,"Conectar todos\n\r los sensores");
+	glcd_text57(9,0, text,1,ON); 
+	sprintf(text,"2-> Ejecutar."); 
+	glcd_text57(10,40, text,1,ON);
+	sprintf(text,"3-> Atras."); 
+	glcd_text57(10,50, text,1,ON);
+	op=0;
+	j=0;
+
+command:
+	delay_ms(200);
+	while(op==0){
+		op=swap( PORTB & 0b00110000);	
+	}
+	if(op==2)
+		goto exit;
+	if(op==1){
+		if(j)
+			goto done;
+	}
+	
+test:
+	get_adc(s);
+	for(i=0;i<NCH;i++){
+		v= (float) s[i].adc*5.0/1023.0;
+		error=fabs(1 - s[i].b/v); 
+		if(error >= MAXERROR)
+			status[i]=1;
+	}
+
+	glcd_fillScreen(OFF);   
+	sprintf(text,"Recalibrar Sensores\a");
+	glcd_text57(0,0, text,1,ON); 
+	sprintf(text,"2-> Calibrar."); 
+	glcd_text57(10,40, text,1,ON);
+	sprintf(text,"3-> Atras."); 
+	glcd_text57(10,50, text,1,ON);
+	
+	k=0;
+	for(i=0;i<NCH;i++){
+		if(status[i]){
+			sprintf(text,"S%d",i+1);
+			glcd_text57(10+k,20, text,1,ON); 
+			k+=20;
+		}
+	}
+	j=1;
+	op=0;
+
+	goto command;
+	
+done:
 	return 0;
 
 exit:
-
-	return -1;
+	return 1;
 }
-
-
 
 
