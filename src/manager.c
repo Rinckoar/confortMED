@@ -65,15 +65,8 @@ int1 manager_init(sensor s)
 {
 
 	int1 retval=0;
-	int i;
 
 	set_adc();
-	
-	for(i=0;i<NCH;i++){
-		write_float_eeprom(8*i,1);
-		write_float_eeprom(8*i+4,0);	
-	}
-	
 	if(set_sensor_values(s)){
 		retval=1;
 	}

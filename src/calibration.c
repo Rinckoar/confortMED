@@ -285,7 +285,7 @@ unsigned int test_calib(sensor s)
 
 	unsigned int op,k,i,j;
 	unsigned int status[4]={0 0 0 0};
-	float V,Wx,Wref,error;
+	float Vx,error;
 
 intro:	
 	glcd_fillScreen(OFF);   
@@ -311,26 +311,21 @@ command:
 	}
 	
 test:
+	delay_ms(2000);
 	get_adc(s);
 	for(i=0;i<NCH;i++){
-		V= (float) s[i].adc*5.0/1023.0;
-		Wx=(V-s[i].b)/s[i].m;
-		Wref= s[i].b/s[i].m; 
-		error=2*fabs(Wx-Wref)/(Wx+Wref); 
+		Vx = (float) s[i].adc*5.0/1023.0;
+		error=fabs(Vx - s[i].b)/5.0; 
 
-		glcd_fillScreen(OFF);   
-		sprintf(text,"V=%f",V); 
+/*		glcd_fillScreen(OFF);   
+		sprintf(text,"Vx=%f",Vx); 
 		glcd_text57(0,10, text,1,ON);
-		sprintf(text,"Wx=%f",Wx);
-		glcd_text57(0,20, text,1,ON); 
-		sprintf(text,"Vref=%f",Wref); 
-		glcd_text57(0,30, text,1,ON);
 		sprintf(text,"Error=%f",error); 
-		glcd_text57(0,40, text,1,ON);
+		glcd_text57(0,20, text,1,ON);
 
 		
 		delay_ms(5000);
-
+*/
 		if(error >= MAXERROR)
 			status[i]=1;
 	}

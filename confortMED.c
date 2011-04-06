@@ -8,7 +8,7 @@
  *				ConfortMED                                    *
  *                                                                            *
  *	AUTHOR:		Juan Felipe Restrepo Rinckoar.                        *
- *	ADVISOR:	Robinson Torrez Ph.D.                                 *
+ *	ADVISOR:	Robinson Torres Ph.D.                                 *
  *	                                                                      *
  *		Escuela de Ingenieria de Antioquia-Universidad CES            *
  *			                                                      *
@@ -48,7 +48,7 @@ void ext()
 
 //		RB INTERRUPT 
 //-------------------------------------------	
-#INT_RB
+#int_RB
 void Interrupcion_RB()
 {
 	int button;
@@ -96,7 +96,7 @@ static signed int main_init()
 	PORTE=0xFF;
 	PORTB=0x00;
 
-	s=(sensor)malloc(4*sizeof(_sensor));
+	s=(sensor)malloc(NCH*sizeof(_sensor));
 	if(s==NULL){	
 		check=-1;
 		goto exit;

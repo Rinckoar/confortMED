@@ -11,7 +11,7 @@ CC=ccsc
 CCPATH = $(HOME)/.wine/drive_c/Program\ Files/PICC
 CONFIG_CC= wine $(CCPATH)/$(CC)
 
-LOCAL_PATH=$(HOME)/prog_home/$(PROJECT)
+LOCAL_PATH=$(HOME)/prog/$(PROJECT)
 LOCAL_LIB=$(LOCAL_PATH)/lib
 LOCAL_INCLUDE=$(LOCAL_PATH);$(LOCAL_PATH)/src
 
