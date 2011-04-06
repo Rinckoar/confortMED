@@ -74,9 +74,6 @@ void show_values(sensor s,unsigned int units)
 	
    	unsigned int i,r;	
 	for(i=0;i<NCH;i++){
-
-		
-		
 		sprintf(value,"%.2f",adc_2_pressure(s[i].adc,s[i].m,s[i].b,units)); 
 		
 		temp= (float) s[i].adc/1023.0;

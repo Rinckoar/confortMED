@@ -122,7 +122,6 @@ command:
 		op=swap( PORTB & 0b00110001);	
 	}
 
-select:
 	if(op==2)
 		goto exit;
 	if(op==16){

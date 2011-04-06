@@ -22,7 +22,7 @@ float counter(float count)
 	return count;
 
 }
-
+/*
 void set_calib_values(sensor s,unsigned int index)
 {
 	unsigned int j;
@@ -47,10 +47,11 @@ void set_calib_values(sensor s,unsigned int index)
 		delay_ms(600);
 	}
 }
-/*
+*/
+
 void set_calib_values(sensor s,unsigned int index)
 {
-	load[0]=198;
+/*	load[0]=198;
 	load[1]=186;
 	load[2]=116;
 	load[3]=89;
@@ -70,7 +71,7 @@ void set_calib_values(sensor s,unsigned int index)
 	voltage[6]=6.8;
 	voltage[7]=4.0;
 	voltage[8]=2.7;
-	voltage[9]=2.8;
+	voltage[9]=2.8;*/
 
 	load[0]=0;
 	load[1]=10;
@@ -87,7 +88,7 @@ void set_calib_values(sensor s,unsigned int index)
 	voltage[5]=5;
 
 }
-*/
+
 
 void linear_reg(sensor s,unsigned int index)
 {
@@ -284,7 +285,7 @@ unsigned int test_calib(sensor s)
 
 	unsigned int op,k,i,j;
 	unsigned int status[4]={0 0 0 0};
-	float v,error;
+	float V,Wx,Wref,error;
 
 intro:	
 	glcd_fillScreen(OFF);   
@@ -312,8 +313,24 @@ command:
 test:
 	get_adc(s);
 	for(i=0;i<NCH;i++){
-		v= (float) s[i].adc*5.0/1023.0;
-		error=fabs(1 - s[i].b/v); 
+		V= (float) s[i].adc*5.0/1023.0;
+		Wx=(V-s[i].b)/s[i].m;
+		Wref= s[i].b/s[i].m; 
+		error=2*fabs(Wx-Wref)/(Wx+Wref); 
+
+		glcd_fillScreen(OFF);   
+		sprintf(text,"V=%f",V); 
+		glcd_text57(0,10, text,1,ON);
+		sprintf(text,"Wx=%f",Wx);
+		glcd_text57(0,20, text,1,ON); 
+		sprintf(text,"Vref=%f",Wref); 
+		glcd_text57(0,30, text,1,ON);
+		sprintf(text,"Error=%f",error); 
+		glcd_text57(0,40, text,1,ON);
+
+		
+		delay_ms(5000);
+
 		if(error >= MAXERROR)
 			status[i]=1;
 	}
