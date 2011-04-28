@@ -204,10 +204,3 @@ exit:								// end of the calib. menu.
 	glcd_init(OFF);
 	return MAIN_OFF;
 }
-
-
-
-
-
-
-

@@ -190,4 +190,3 @@ void main(void)
 error:								// call the function to attend the init errors.
 	main_error(er);
 }
-

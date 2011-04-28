@@ -39,6 +39,7 @@
 #define MAIN_PAUSE	3
 #define MAIN_CALIB	0
 
+#define MAXPRESSURE	40		// Over-pressure threshold value in kPa. 
 #define MAXERROR	0.1		// Maximum full scale error allowed to test the sensors.
 
 #define KPA2MMHG	7.50061561	// constant to change Kpa to mmHg.
@@ -55,5 +56,3 @@ typedef struct {			// sensor structure: 	x-> 	x coordinate to print the numeric 
 					//			b->	intercept with the y-axis.
 
 typedef _sensor* sensor;		// define a structure _sensor pointer.
-
-

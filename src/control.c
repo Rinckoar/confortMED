@@ -111,19 +111,25 @@ unsigned int set_lcd(unsigned int mode)
 //	graphic pressure values for each 
 //	sensor. First the pressure value 
 //	(float) is cahnged into char, then
-//	the rate ADC/MaxADC is calculated 
-//	and based in this value the circle 
-//	radius is set.
+//	the rate ADC/MaxADC (ADC/1023) is 
+//	calculated and based in this value
+//	the circle radius is set.
+//	Finaly the over-pressure warning "!"
+//	is printed if the read pressure is
+//	bigger than MAXPRESSURE.
 //-------------------------------------------	
 void show_values(sensor s,unsigned int units)
 {
-	char value[9];
-	float temp=0;
+	char text[9];
+	float temp=0,pressure=0;
    	unsigned int i,r;
 
 	for(i=0;i<NCH;i++){
-		sprintf(value,"%.2f",adc_2_pressure(s[i].adc,s[i].m,s[i].b,units)); 	// charge in "value" (char) the value returned by adc_2_pressure. 
+
+		pressure=adc_2_pressure(s[i].adc,s[i].m,s[i].b,units);			// calculate the read pressure.
+		sprintf(text,"%.2f",pressure); 						// charge in "value" (char) the value of pressure. 
 		
+
 		temp= (float) s[i].adc/1023.0;
 		if(temp < 0.25)								// set the circle radius.
 			r=2;
@@ -137,8 +143,21 @@ void show_values(sensor s,unsigned int units)
 		glcd_rect(s[i].x,s[i].y,s[i].x + 35,s[i].y + 7,YES,OFF);		// erase past numeric value.
 		glcd_circle(s[i].rx,s[i].ry,s[i].oldr,YES,OFF);				// erase past circle.
 		glcd_circle(s[i].rx,s[i].ry,r,YES,ON);					// print new circle.
-		glcd_text57(s[i].x, s[i].y, value,1,ON); 				// print new numeric value.
+		glcd_text57(s[i].x, s[i].y, text,1,ON); 				// print new numeric value.
 		s[i].oldr=r;
+		
+		if(units == KPA){							// print warning message for over-pressure.
+			if(pressure >= MAXPRESSURE){
+				sprintf(text,"!");
+				glcd_text57(s[i].rx-5, s[i].ry-7, text,2,OFF);
+			}
+		}
+		else{
+			if(pressure >= MAXPRESSURE*KPA2MMHG){
+				sprintf(text,"!");
+				glcd_text57(s[i].rx-5, s[i].ry-7, text,2,OFF);
+			}
+		}
 	}
 }
 
@@ -180,5 +199,3 @@ void write_2_eeprom(sensor s,unsigned int index)
 	write_float_eeprom(8*index,s[index].m);
 	write_float_eeprom(8*index+4,s[index].b);	
 }
-
-
