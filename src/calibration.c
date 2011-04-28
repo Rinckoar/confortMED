@@ -4,7 +4,16 @@
 float *voltage,*load;
 char text[50];
 
-float counter(float count)
+
+//		COUNTER
+//input:
+//	count	Value that holds the counting.
+//description:
+//	function to set the value of the 
+//	aplayed weight in the sensor during
+//	the calibration.
+//-------------------------------------------	
+static float counter(float count)
 {
 	if(INCR){
 		delay_ms(20);
@@ -20,10 +29,18 @@ float counter(float count)
 		count=0;
 	
 	return count;
-
 }
-/*
-void set_calib_values(sensor s,unsigned int index)
+
+//		SET CALIB. VALUES
+//input:
+//	s	Sensor structure.
+//	index	Point to a specific sensor.
+//description:
+//	function devoted to set each (x,y) 
+//	point to be used in the linear 
+//	regretion.
+//-------------------------------------------	
+static void set_calib_values(sensor s,unsigned int index)
 {
 	unsigned int j;
 	float v,w;
@@ -47,50 +64,18 @@ void set_calib_values(sensor s,unsigned int index)
 		delay_ms(600);
 	}
 }
-*/
 
-void set_calib_values(sensor s,unsigned int index)
-{
-/*	load[0]=198;
-	load[1]=186;
-	load[2]=116;
-	load[3]=89;
-	load[4]=120;
-	load[5]=109;
-	load[6]=28;
-	load[7]=58;
-	load[8]=34;
-	load[9]=31;
-
-	voltage[0]=22.7;
-	voltage[1]=16.6;
-	voltage[2]=15.9;
-	voltage[3]=12.5;
-	voltage[4]=10.2;
-	voltage[5]=6.8;
-	voltage[6]=6.8;
-	voltage[7]=4.0;
-	voltage[8]=2.7;
-	voltage[9]=2.8;*/
-
-	load[0]=0;
-	load[1]=10;
-	load[2]=20;
-	load[3]=30;
-	load[4]=40;
-	load[5]=50;
-
-	voltage[0]=0;
-	voltage[1]=1;
-	voltage[2]=2;
-	voltage[3]=3;
-	voltage[4]=4;
-	voltage[5]=5;
-
-}
-
-
-void linear_reg(sensor s,unsigned int index)
+//	LINEAR REGRETION ALGORITHM
+//input:
+//	s	Sensor structure.
+//	index	Point to a specific sensor.
+//description:
+//	algorithm based in a simple linear 
+//	regretion.
+//	At the end, it writes the new calib.
+//	parameters (m and b) in the EEPROM.
+//-------------------------------------------	
+static void linear_reg(sensor s,unsigned int index)
 {
 
 	float Xm,Ym,Sx,Sy,Sxy,r,b0,b1;
@@ -135,18 +120,33 @@ void linear_reg(sensor s,unsigned int index)
 	write_2_eeprom(s,index);
 }
 
+//		SENSOR CALIBRATION
+//input:
+//	s	Sensor structure.
+//description:
+//	This function stars the sensor's 
+//	calibration.
+//	First, it allocate in memory the
+//	arrays "voltage" and "load", used to
+//	store the points for the linear 
+//	regretion.
+//	The code ask to the user to select a
+//	sensor, then it calls for the values of
+//	each point (load[i],voltage[i]) to be
+//	used in the regretion, and finaly it
+//	computes the linear reg.
+//-------------------------------------------	
 void sensor_calibration(sensor s)
 {
 	unsigned int k=0,op=0;
 
-	voltage=(float *)malloc(NKVAL*sizeof(float));
+	voltage=(float *)malloc(NKVAL*sizeof(float));	// allocate variables in memory.	
 	load=(float *)malloc(NKVAL*sizeof(float));
 	if((voltage==NULL) || (load==NULL))	
 		goto exit;
-	
 
 intro:	
-	glcd_fillScreen(OFF);   
+	glcd_fillScreen(OFF);  				// screen to select a sensor. 
 	sprintf(text,"Elegir Sensor");
 	glcd_text57(10,0, text,1,ON); 
 	sprintf(text,"1-> Siguiente.");
@@ -165,22 +165,22 @@ intro:
 	}
 	op=0;
 
-command:	
-	
+command:						// code to attend the user request. 
+							
 	delay_ms(200);
 	while(op==0){
-		op=swap( PORTB & 0b00110001);	
+		op=swap( PORTB & 0b00110001);		// wait until the user press a button.
 	}
-	if (op==2)
+	if (op==2)					// checks if the user wants to go out the from the menu.
 		goto exit;
-	if((op==16)){
+	if((op==16)){					// checks which sensor the user wants to calibrate.
 		k++;
 		if(k>NCH)
 			k=0;
 		op=0;
 		goto intro;
 	}
-	if((op==1)){
+	if((op==1)){					
 		switch (k){
 
 			case 0: {	goto s0;
@@ -204,7 +204,7 @@ command:
 		}
 	}
 
-s0:
+s0:							// option to calibrate sensor one.
 	glcd_fillScreen(OFF);   
 	sprintf(text,"Sensor # 1");
 	glcd_text57(0,0, text,1,ON); 
@@ -222,7 +222,8 @@ s0:
 		k=0;
 		goto intro;
 	}
-s1:
+
+s1:							// option to calibrate sensor two.
 	glcd_fillScreen(OFF);   
 	sprintf(text,"Sensor # 2");
 	glcd_text57(0,0, text,1,ON); 
@@ -234,14 +235,14 @@ s1:
 	glcd_text57(0,55, text,1,ON);
 	delay_ms(300);
 	
-	set_calib_values(s,1);
-	linear_reg(s,1);
+	set_calib_values(s,1);				// call the function to set the reg. points.
+	linear_reg(s,1);				// call the linear reg. algorithm.
 	if(k<NCH){
 		k=0;
 		goto intro;
 	}
 
-s2:
+s2:							// option to calibrate sensor three.
 	glcd_fillScreen(OFF);   
 	sprintf(text,"Sensor # 3");
 	glcd_text57(0,0, text,1,ON); 
@@ -259,7 +260,8 @@ s2:
 		k=0;
 		goto intro;
 	}
-s3:
+
+s3:							// option to calibrate sensor four.
 	glcd_fillScreen(OFF);   
 	sprintf(text,"Sensor # 4");
 	glcd_text57(0,0, text,1,ON); 
@@ -275,11 +277,25 @@ s3:
 	linear_reg(s,3);
 	k=0;
 	goto intro;
-exit:
+exit:							// end of calibration.
 	free(voltage);
 	free(load);
 }
 
+//		SENSOR TEST ROUTINE
+//input:
+//	s	Sensor structure.
+//description:
+//	This function perform a test to
+//	each sensor.
+//	First, it asks to the user to connect
+//	all the sensors, then it checks for the
+//	value read in all the ADC channels and
+//	compares these values with those stored
+//	in the EEPROM memory. If the full scale
+//	error is bigger than MAXERROR a warning
+//	is displayed.
+//-------------------------------------------	
 unsigned int test_calib(sensor s)
 {
 
@@ -298,7 +314,7 @@ intro:
 	op=0;
 	j=0;
 
-command:
+command:							// code to attend the user request. 
 	delay_ms(200);
 	while(op==0){
 		op=swap( PORTB & 0b00110000);	
@@ -312,25 +328,16 @@ command:
 	
 test:
 	delay_ms(2000);
-	get_adc(s);
+	get_adc(s);						// read all ADC channels.
 	for(i=0;i<NCH;i++){
-		Vx = (float) s[i].adc*5.0/1023.0;
+		Vx = (float) s[i].adc*5.0/1023.0;		// compare the read value and the stored value.
 		error=fabs(Vx - s[i].b)/5.0; 
-
-/*		glcd_fillScreen(OFF);   
-		sprintf(text,"Vx=%f",Vx); 
-		glcd_text57(0,10, text,1,ON);
-		sprintf(text,"Error=%f",error); 
-		glcd_text57(0,20, text,1,ON);
-
 		
-		delay_ms(5000);
-*/
 		if(error >= MAXERROR)
 			status[i]=1;
 	}
 
-	glcd_fillScreen(OFF);   
+	glcd_fillScreen(OFF);   				// display warning menssage
 	sprintf(text,"Recalibrar Sensores\a");
 	glcd_text57(0,0, text,1,ON); 
 	sprintf(text,"2-> Calibrar."); 

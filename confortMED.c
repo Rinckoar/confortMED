@@ -1,9 +1,9 @@
 /******************************************************************************
  *                                                                            *
- *	      Juan Felipe Restrepo <jf.restrepo.rinckoar@gmail.com>           *
+ *	2011-04-28  Juan Felipe Restrepo <jf.restrepo.rinckoar@gmail.com>     *
  *----------------------------------------------------------------------------*
  *				                                              *
- *	PORTABLE DEVICE TO MESSURE PRESSURE PATTERNS IN MODELED SEATS         *
+ *	PORTABLE DEVICE TO MEASSURE PRESSURE PATTERNS IN MODELED SEATS         *
  *				                                              *
  *				ConfortMED                                    *
  *                                                                            *
@@ -13,17 +13,14 @@
  *		Escuela de Ingenieria de Antioquia-Universidad CES            *
  *			                                                      *
  *			   MEDELLIN-COLOMBIA                                  *
- *			       	  2010                                        *
+ *			       	  2011                                        *
  *---------------------------------------------------------------------------*/
-
 #include "confortMED.h"
 #include "manager.c"
 #include <stdlibm.h>
 
 sensor s;
 unsigned int main_mode,units;
-
-
 
 /*********************************************
  *  		INTERRUPTS		     *
@@ -34,8 +31,8 @@ unsigned int main_mode,units;
 #int_EXT
 void ext()
 { 
-	if(main_mode==MAIN_ON){
-		main_mode=MAIN_PAUSE;
+	if(main_mode==MAIN_ON){					// switch between the MAIN_ON mode and
+		main_mode=MAIN_PAUSE;				// the MAIN_PAUSE mode.
 		PORTE=MAIN_PAUSE;
 		return;
 	}
@@ -58,16 +55,16 @@ void Interrupcion_RB()
 	switch (button){
 		
 		case 1:{						
-			       	main_mode=set_lcd(main_mode);
-				PORTE=main_mode;
+			       	main_mode=set_lcd(main_mode);	// switch between the MAIN_ON mode and 
+				PORTE=main_mode;		// the MAIN_OFF mode.
 			      	break;
 		      }
 		case 2:{					
-				if(main_mode==MAIN_ON){
+				if(main_mode==MAIN_ON){		// switch the unints (kPa or mmHg).	
 					units=~units;
 					break;
 				}
-				if(main_mode==MAIN_OFF){
+				if(main_mode==MAIN_OFF){	// enter to the calibration mode.	
 					main_mode=MAIN_CALIB;
 					PORTE=main_mode;
 					break;
@@ -83,6 +80,16 @@ void Interrupcion_RB()
  ********************************************/		
 
 //		MAIN INIT 
+//output:
+//	check	Varieble used to check if 
+//		everything was correctly 
+//		initialized or not.
+//description:
+//	function to initized the device, it
+//	allocates in memory the sensors 
+//	structure array, set the ports
+//	function and call the fuction to
+//	init. the menu manager.
 //-------------------------------------------	
 static signed int main_init()
 {
@@ -126,20 +133,27 @@ exit:
 }
 
 //		MAIN ERROR DISPLAY
+//input:
+//	er	Variable to select the kind
+//		of error.
+//description:
+//	Print in the GLCD an error message
+//	if the init. routine fail.
 //-------------------------------------------	
 static void main_error(int er)
 {
-	char H[]="ALLOCATION ERROR";
-	char H1[]="LOADING INTERNAL \n     VALUES ERROR";
-
+	char text[]="";
+	
 	glcd_init(ON);
 	switch(er){
 		case -1:{	
-				glcd_text57(20,20,H, 1, ON);
+				sprintf(text,"ALLOCATION ERROR");
+				glcd_text57(20,20,text, 1, ON);
 				break;
 			}
 		case -2:{	
-				glcd_text57(20,20, H1, 1, ON);
+				sprintf(text,"LOADING INTERNAL \n     VALUES ERROR");
+				glcd_text57(20,20, text, 1, ON);
 				break;
 			}
 	}
@@ -148,32 +162,32 @@ static void main_error(int er)
 }
 
 //		MAIN 
+//description:
+//	main routine.
 //-------------------------------------------	
 void main(void)
 {
 	signed int er;	
-	er=main_init();
-	if(er<0)
+			
+	er=main_init();						// call the init. function code.
+	if(er<0)						// checks if there was any error during the init.
 		goto error;
 	
 	while(1){
 		
-		if(main_mode==MAIN_ON)
+		if(main_mode==MAIN_ON)				// call the function to attend the MAIN_ON operation mode.
 			main_menu(s,units);
 		
-		while(main_mode==MAIN_PAUSE){
+		while(main_mode==MAIN_PAUSE){			// attend the MAIN_PAUSE mode.
 		}
-		while(main_mode==MAIN_CALIB){
+		while(main_mode==MAIN_CALIB){			// call the function to attend the MAIN_CALIB mode.
 			main_mode=calib_menu(s);
 			PORTE=main_mode;
 		}
 
 	}
 
-
-
-
-error:
+error:								// call the function to attend the init errors.
 	main_error(er);
 }
 

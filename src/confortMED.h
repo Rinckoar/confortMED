@@ -45,7 +45,7 @@
 #define GR2KPA		9.807		// constant to change grf/mm^2 to Kpa.
 #define AREA		71.480343488 	// Sensor active area.
 
-typedef struct {			// sensor struct: 	x-> 	x coordinate to print the numeric pressure value. 
+typedef struct {			// sensor structure: 	x-> 	x coordinate to print the numeric pressure value. 
 	int x,y,rx,ry,oldr;		//			y-> 	y coordinate to print the numeric pressure value.
 	long adc;			//			rx->	x cordinate for the center of the circle.
 	float m,b;			//			ry->	y cordinate for the center of the circle.
@@ -54,6 +54,6 @@ typedef struct {			// sensor struct: 	x-> 	x coordinate to print the numeric pre
 					//			m-> 	value of the slope.
 					//			b->	intercept with the y-axis.
 
-typedef _sensor* sensor;		// define struct _sensor pointer.
+typedef _sensor* sensor;		// define a structure _sensor pointer.
 
 
