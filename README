@@ -2,53 +2,60 @@
 
 	Copyright (C) Juan Felipe Restrepo <jf.restrepo.rinckoar@gmail.com>
 
+---------------------------------------------------------------------------------------
+
 Presentation
 ============
 
 	This program was written in C code and contains all the set of functions
 	required for the device to work.
+---------------------------------------------------------------------------------------
 
 Files Description
-================
+=================
 	
 The CONFORTMED package contains 8 files.
 
 	1. confortmed.c
 		This file contains the main function and the routines to 
-		attend the PORTB interruption (External and RB4-RB7).
+		attend the PORTB interruptions (External and RB4-RB7).
 	2. confortmed.h
 		This file contains all the definition of all the constant 
-		values and also the definition of the structure called 
+		values and also the definition of a structure called 
 		"_sensor".
 	3. manager.c
 		This file contains all the routines to attend the different
-		system modes and also initialize the values of the sensor 
+		system states and also initializes the values of the sensor 
 		structure.
 	4. control.c
 		This file contains the routines to set and control the ADC,
-		switch the GLCD between ON and OFF, compute the read 
-		pressure values and read and write values in the EEPROM.
+		switch the GLCD between ON and OFF, compute the pressure 
+		values and read and write values in the EEPROM.
 	5. calibration.c
 		This file contains all the routines to execute the system
 		calibration and the sensor test.
 	6. confortmed_glcd.c
 		This file contains the pin definitions and function to
 		operate with the GLCD.
+	7. Makefile
+		File to compile the code in UNIX systems.
+	8. README
+		User Manual.
 
 confortmed.c
 	
 	Functions:
 		
-		* void ext(): attend the RB0 inter. Switch between MAIN_ON and 
+		* void ext(): attends the RB0 inter. Switch between MAIN_ON and 
 			MAIN_PAUSE.
-		* void Interrupcion_RB(): attend the RB4-RB7 inter. switch
+		* void Interrupcion_RB(): attends the RB4-RB7 inter. switch
 			between MAIN_ON and MAIN_OFF, change pressure units 
 			Kpa/mmHg and enter to the calibration menu.
-		* static signed int main_init(): set the PIC inputs and outputs,
+		* static signed int main_init(): sets the PIC inputs and outputs,
 			allocate the sensor structure array, call functions to
 			init. the GLCD, the ADC and the sensor array initial 
 			values.
-		* static void main_error(int er): display error messages if
+		* static void main_error(int er): displays error messages if
 			there was something wrong in the init. routine.
 		* void main(void): main routine.
 
@@ -56,14 +63,14 @@ manager.c
 	
 	Functions:
 		
-		* static int1 set_sensor_values(sensor s): initialize the sensor
+		* static int1 set_sensor_values(sensor s): initializes the sensor
 			structure values (x,y,rx,ry,oldr,m,b). The values m and b
 			are read from the EEPROM memory.
 		* int1 manager_init(sensor s): calls the functions to init. the 
 			ADC and the sensor structure. 
 		* void main_menu(sensor s,unsigned int units): calls the functions
 			to read the ADC and print the values in the GLCD.
-		* unsigned int calib_menu(sensor s): display the calibration menu
+		* unsigned int calib_menu(sensor s): displays the calibration menu
 			and switch between the 2 options (sensor calibration and 
 			sensor test).
 control.c			
@@ -74,10 +81,10 @@ control.c
 		* float adc_2_pressure(long adc,float m,float b,unsigned int units):
 			function to calculate the pressure value using the ADC value,
 			the slope and the y-intercept from the calibration curve, 
-			the sensing area and some constants to pass from gram-force
+			the sensing area and a constants to pass from gram-force
 			(grf) to Kilo-Pascal (kPa) and from Kpa to millimeters of 
 			mercury (mmHg).
-		* unsigned int set_lcd(unsigned int mode): switch between MAIN_ON
+		* unsigned int set_lcd(unsigned int mode): switches between MAIN_ON
 			and MAIN_OFF states and turn ON and OFF the GLCD.
 		* void show_values(sensor s,unsigned int units): prints the graphic
 			and numerical pressure values.
@@ -98,12 +105,8 @@ calibration.c
 			regression and writes the values in the EEPROM memory.
 		* void sensor_calibration(sensor s): stars the calibration option,
 			calls all the calibration functions.
-		* unsigned int test_calib(sensor s): stars the test sensor option, 
-			and calculate the full scale error between the load value
-			read when the sensor is unloaded and the value stored in 
-			EEPROM memory, finally displays a warning message if the
-			error if bigger than MAXERROR.
-
+		* unsigned int test_calib(sensor s): stars the test sensor option.
+						     *
 confortmed_glcd.c
 
 	Code based on the CCS library HDM64GS12.c
@@ -142,6 +145,7 @@ confortmed_glcd.c
 		* glcd_update(): write the display data stored in RAM to the 
 			LCD. Only available if FAST_GLCD is defined.          
 
+---------------------------------------------------------------------------------------
 
 System Navigation
 =================
@@ -150,40 +154,109 @@ System Navigation
 			1. Pause.  		PORTB.0
 			2. On/Off.		PORTB.4
 			3. Calibration.		PORTB.5
-	LEDS: 
+	Leds: 
 			1. Blue.		PORTE.0
 			2. Green.		PORTE.1
 			3. Red.			PORTE.2
 		Note: the Leds turn on when the port pins are set to 0.	
 
 	System States
-			1. MAIN_ON.	
-			2. MAIN_OFF.
-			3. MAIN_PAUSE.
-			4. MAIN_CALIB.	
+			1. MAIN_ON.		Green led turned on.
+			2. MAIN_OFF.		Red led turned on.	
+			3. MAIN_PAUSE.		Blue led turned on.
+			4. MAIN_CALIB.		All leds turned on.
 	Menus:
 		1. Main Menu.
 		2. Calibration Menu
 			2.1. Test Sensor Menu.
 			2.2. Sensor Calibration Menu. 	
 		
+	When the system is connected to power a intro message is displayed then the display 
+	is turned off and the system is set to the MAIN_OFF state.
 
+	When the system is in MAIN_OFF and the on/off button is pressed the device goes to
+	the MAIN_ON state and the Main Menu starts.
+		
+		Main Menu: In this menu the pressure value are read and displayed in the 
+			GLCD. 
+			
+			If button 3 (Calibration) is pressed the pressure unit toggle from
+			Kpa to mmHg and vice versa.  
 
+			If button 2 (On/Off) is pressed the system goes to MAIN_OFF state.
 
+			If button 1 (Pause) is pressed the system goes to MAIN_PAUSE state.
+			
+	When the system is in MAIN_PAUSE mode the GLCD screen is froze.
 
+			If button 2 (On/Off) is pressed the system goes to MAIN_OFF state.
 
+			If button 1 (Pause) is pressed the system goes to MAIN_ON state.
 
+	When the system is in MAIN_OFF mode and the button 3 is pressed the system goes to
+	the MAIN_CALIB state and the Calibration Menu is displayed.
+		
+		Calibration Menu: This menu goes through 2 sub-menus called Sensor Calibration
+			and Test Sensor.
+		
+			When the Calibration Menu is reached an introduction message is showed.
 
+				If button 1 is pressed the sub-menus are toggled.
 
+				If button 2 is pressed the system goes to the sub-menu showed in
+				the GLCD screen.
 
+				If button 3 is pressed the system exits the Calibration Menu and
+				goes to the MAIN_OFF state.
 
+		Test Sensor Menu: This menu was made to test if the sensors have physically
+			changed.
 
+			It compares the load value read when the sensor is totally unloaded 
+			with the y-intercept parameter of the calibration curve that is 	
+			stored in the EEPROM memory. So, the full scale error is computed
+			between these values and a warning is displayed if this error is 
+			bigger than MAXERROR (Maximum full scale error allowed).  
 
+			When this menu is reached the message "connect all sensors" is showed.
 
+				If button 2 is pressed the algorithm is executed.
 
+				If button 3 is pressed the system return to the Calibration 
+				Menu.
+		
+		Sensor Calibration: This menu was designed to perform the sensor calibration.
 
+			It performs a simple linear regression using n points (the number of 
+			points is set by the NKVAL variable defined in confortmed.h),	
+			then the calculated parameters (slope, y-axes inter.) are stored in the
+			EEPROM memory.
+		
+			When this menu is reached the user is asked to choose between calibrate
+			a single sensor or all the sensors.
 
+				Use button 1 to choose a single sensor (S1,S2,S3,S4) or all
+				the sensors.
 
+				Use button 2 to execute the calibration algorithm on the chose
+				option.
 
+				Use button 3 to go back to the Calibration Menu.
 
-	 
+			When the sensor is chose the system ask to the user to set the n 
+			points (load[i],voltage[i], i=1...n) for the linear regression.
+
+			The voltage value is read from the ADC channel.
+			The load value must be introduced by the user using the command
+			buttons.
+
+				Use button 1 to increase the load value.
+				Use button 2 to decrease the load value.
+				Use button 3 to store the (load[i],voltage[i]) point and
+				go to set the next point.
+
+			Ones the n points are set, the system perform the linear regression
+			and display the results in the GLCD i.e the slope, the y-axes inter.
+			and the correlation coefficient.
+--------------------------------------------------------------------------------------------------
+	2011-04-29  Juan Felipe Restrepo <jf.restrepo.rinckoar@gmail.com>			
