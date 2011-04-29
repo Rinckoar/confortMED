@@ -87,7 +87,7 @@ int1 manager_init(sensor s)
 //	is in MAIN_ON mode and call the 
 //	functions to read the ADC and print 
 //	the vales in the GLCD. 
-//-------------------------------------------	
+//-------------------------------------------
 void main_menu(sensor s,unsigned int units)
 {
 	char u[9];
@@ -101,6 +101,9 @@ void main_menu(sensor s,unsigned int units)
 	
 	glcd_rect(5,54,30,62,YES,OFF);
 	glcd_text57(5,54, u,1,ON); 
+#ifdef FAST_GLCD	
+	glcd_update();						// update the GLCD.
+#endif
 }
 
 //		CALIBRATION MENU 
@@ -112,7 +115,7 @@ void main_menu(sensor s,unsigned int units)
 //	two calibration options 
 //	"Evaluar sensores" and 
 //	"Calibrar sensores".
-//-------------------------------------------	
+//-------------------------------------------
 unsigned int calib_menu(sensor s)
 {
 	char text[50];
@@ -133,7 +136,10 @@ intro:
 	x=1;
 
 command:							// code to attend the user request. 
-	delay_ms(200);
+#ifdef FAST_GLCD
+	glcd_update();
+#endif	
+	delay_ms(500);
 	while(op==0){
 		op=swap( PORTB & 0b00110001);	
 	}
@@ -153,7 +159,7 @@ command:							// code to attend the user request.
 	}
 
 one:	
-	glcd_fillScreen(OFF);   				// screen option test sensors.
+	glcd_fillScreen(OFF);   				// screen option test sensors.	
 	sprintf(text,"Evaluar Sensores");
 	glcd_text57(10,10, text,1,ON); 
 	sprintf(text,"1-> Siguiente.");
@@ -198,9 +204,13 @@ exit:								// end of the calib. menu.
 	glcd_fillScreen(OFF);   
 	sprintf(text,"Fin del Menu");
 	glcd_text57(30,30, text,1,ON);
-	delay_ms(1000);
 	enable_interrupts(int_RB);				
 	enable_interrupts(int_EXT);
+#ifdef FAST_GLCD
+	glcd_update();						// update the GLCD.
+#endif
+	delay_ms(1000);
 	glcd_init(OFF);
 	return MAIN_OFF;
+
 }

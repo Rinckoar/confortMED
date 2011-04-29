@@ -16,12 +16,12 @@ char text[50];
 static float counter(float count)
 {
 	if(INCR){
-		delay_ms(20);
+		delay_ms(100);
 		if(INCR)
 			count+=1;
 	}
 	if(DECR){
-		delay_ms(20);
+		delay_ms(100);
 		if(DECR)
 			count-=1;
 	}
@@ -38,7 +38,7 @@ static float counter(float count)
 //description:
 //	function devoted to set each (x,y) 
 //	point to be used in the linear 
-//	regretion.
+//	regression.
 //-------------------------------------------	
 static void set_calib_values(sensor s,unsigned int index)
 {
@@ -58,6 +58,9 @@ static void set_calib_values(sensor s,unsigned int index)
 			glcd_text57(0,10, text,1,ON);
 			sprintf(text,"Y[%d]= %.1f V ",j+1,v);
 			glcd_text57(0,20, text,1,ON);
+#ifdef FAST_GLCD
+			glcd_update();
+#endif	
 		}
 		load[j]=w;
 		voltage[j]=v;
@@ -65,13 +68,13 @@ static void set_calib_values(sensor s,unsigned int index)
 	}
 }
 
-//	LINEAR REGRETION ALGORITHM
+//	LINEAR REGRESSION ALGORITHM
 //input:
 //	s	Sensor structure.
 //	index	Point to a specific sensor.
 //description:
 //	algorithm based in a simple linear 
-//	regretion.
+//	regression.
 //	At the end, it writes the new calib.
 //	parameters (m and b) in the EEPROM.
 //-------------------------------------------	
@@ -115,6 +118,9 @@ static void linear_reg(sensor s,unsigned int index)
 	glcd_text57(20,40, text,1,ON); 
 	sprintf(text,"b=%.3f",s[index].b);
 	glcd_text57(20,50, text,1,ON); 
+#ifdef FAST_GLCD
+	glcd_update();
+#endif	
 	delay_ms(5000);
 	
 	write_2_eeprom(s,index);
@@ -129,11 +135,11 @@ static void linear_reg(sensor s,unsigned int index)
 //	First, it allocate in memory the
 //	arrays "voltage" and "load", used to
 //	store the points for the linear 
-//	regretion.
+//	regression.
 //	The code ask to the user to select a
 //	sensor, then it calls for the values of
 //	each point (load[i],voltage[i]) to be
-//	used in the regretion, and finaly it
+//	used in the regression, and finaly it
 //	computes the linear reg.
 //-------------------------------------------	
 void sensor_calibration(sensor s)
@@ -166,8 +172,10 @@ intro:
 	op=0;
 
 command:						// code to attend the user request. 
-							
-	delay_ms(200);
+#ifdef FAST_GLCD
+	glcd_update();
+#endif	
+	delay_ms(500);
 	while(op==0){
 		op=swap( PORTB & 0b00110001);		// wait until the user press a button.
 	}
@@ -214,8 +222,6 @@ s0:							// option to calibrate sensor one.
 	glcd_text57(0,45, text,1,ON);
 	sprintf(text,"3-> Acep."); 
 	glcd_text57(0,55, text,1,ON);
-	delay_ms(300);
-	
 	set_calib_values(s,0);
 	linear_reg(s,0);
 	if(k<NCH){
@@ -233,8 +239,6 @@ s1:							// option to calibrate sensor two.
 	glcd_text57(0,45, text,1,ON);
 	sprintf(text,"3-> Acep."); 
 	glcd_text57(0,55, text,1,ON);
-	delay_ms(300);
-	
 	set_calib_values(s,1);				// call the function to set the reg. points.
 	linear_reg(s,1);				// call the linear reg. algorithm.
 	if(k<NCH){
@@ -252,8 +256,6 @@ s2:							// option to calibrate sensor three.
 	glcd_text57(0,45, text,1,ON);
 	sprintf(text,"3-> Acep."); 
 	glcd_text57(0,55, text,1,ON);
-	delay_ms(300);
-	
 	set_calib_values(s,2);
 	linear_reg(s,2);
 	if(k<NCH){
@@ -271,8 +273,6 @@ s3:							// option to calibrate sensor four.
 	glcd_text57(0,45, text,1,ON);
 	sprintf(text,"3-> Acep."); 
 	glcd_text57(0,55, text,1,ON);
-	delay_ms(300);
-	
 	set_calib_values(s,3);
 	linear_reg(s,3);
 	k=0;
@@ -315,6 +315,9 @@ intro:
 	j=0;
 
 command:							// code to attend the user request. 
+#ifdef FAST_GLCD
+	glcd_update();
+#endif	
 	delay_ms(200);
 	while(op==0){
 		op=swap( PORTB & 0b00110000);	

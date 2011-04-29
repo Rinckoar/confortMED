@@ -180,11 +180,12 @@ void main(void)
 		
 		while(main_mode==MAIN_PAUSE){			// attend the MAIN_PAUSE mode.
 		}
+
 		while(main_mode==MAIN_CALIB){			// call the function to attend the MAIN_CALIB mode.
 			main_mode=calib_menu(s);
 			PORTE=main_mode;
 		}
-
+	
 	}
 
 error:								// call the function to attend the init errors.

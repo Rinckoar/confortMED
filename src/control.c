@@ -25,7 +25,6 @@ void set_adc()
 //description:
 //	Get the ADC value for each sensor.
 //-------------------------------------------
-
 void get_adc(sensor s)
 {
 	unsigned int i;

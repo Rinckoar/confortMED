@@ -1,0 +1,153 @@
+			CONFORTMED
+
+	Copyright (C) Juan Felipe Restrepo <jf.restrepo.rinckoar@gmail.com>
+
+Presentation
+============
+
+	This program was written in C code and contains all the set of functions
+	required for the device to work.
+
+Files Description
+================
+	
+The CONFORTMED package contains 8 files.
+
+	1. confortmed.c
+		This file contains the main function and the routines to 
+		attend the PORTB interruption (External and RB4-RB7).
+	2. confortmed.h
+		This file contains all the definition of all the constant 
+		values and also the definition of the structure called 
+		"_sensor".
+	3. manager.c
+		This file contains all the routines to attend the different
+		system modes and also initialize the values of the sensor 
+		structure.
+	4. control.c
+		This file contains the routines to set and control the ADC,
+		switch the GLCD between ON and OFF, compute the read 
+		pressure values and read and write values in the EEPROM.
+	5. calibration.c
+		This file contains all the routines to execute the system
+		calibration and the sensor test.
+	6. confortmed_glcd.c
+		This file contains the pin definitions and function to
+		operate with the GLCD.
+
+confortmed.c
+	
+	Functions:
+		
+		* void ext(): attend the RB0 inter. Switch between MAIN_ON and 
+			MAIN_PAUSE.
+		* void Interrupcion_RB(): attend the RB4-RB7 inter. switch
+			between MAIN_ON and MAIN_OFF, change pressure units 
+			Kpa/mmHg and enter to the calibration menu.
+		* static signed int main_init(): set the PIC inputs and outputs,
+			allocate the sensor structure array, call functions to
+			init. the GLCD, the ADC and the sensor array initial 
+			values.
+		* static void main_error(int er): display error messages if
+			there was something wrong in the init. routine.
+		* void main(void): main routine.
+
+manager.c
+	
+	Functions:
+		
+		* static int1 set_sensor_values(sensor s): initialize the sensor
+			structure values (x,y,rx,ry,oldr,m,b). The values m and b
+			are read from the EEPROM memory.
+		* int1 manager_init(sensor s): calls the functions to init. the 
+			ADC and the sensor structure. 
+		* void main_menu(sensor s,unsigned int units): calls the functions
+			to read the ADC and print the values in the GLCD.
+		* unsigned int calib_menu(sensor s): display the calibration menu
+			and switch between the 2 options (sensor calibration and 
+			sensor test).
+control.c			
+	
+	Functions:
+		* void set_adc(): sets up the ADC.
+		* void get_adc(sensor s): takes the ADC values for all the sensors.
+		* float adc_2_pressure(long adc,float m,float b,unsigned int units):
+			function to calculate the pressure value using the ADC value,
+			the slope and the y-intercept from the calibration curve, 
+			the sensing area and some constants to pass from gram-force
+			(grf) to Kilo-Pascal (kPa) and from Kpa to millimeters of 
+			mercury (mmHg).
+		* unsigned int set_lcd(unsigned int mode): switch between MAIN_ON
+			and MAIN_OFF states and turn ON and OFF the GLCD.
+		* void show_values(sensor s,unsigned int units): prints the graphic
+			and numerical pressure values.
+		* void read_from_eeprom(sensor s): reads the EEPROM memory.
+		* void write_2_eeprom(sensor s,unsigned int index): writes values
+			in the EEPROM memory.					 
+calibration.c
+     
+	Functions:	
+		* static float counter(float count): increase and decrease the 
+			value of the variable "count" used to set the applied load
+			during the sensor calibration.
+		* static void set_calib_values(sensor s,unsigned int index): sets
+			the value of each point (load[i],voltage[i]) to be used 
+			in the linear reg. algorithm. 
+		* static void linear_reg(sensor s,unsigned int index): calculate
+			the calibration curve parameters through a simple linear
+			regression and writes the values in the EEPROM memory.
+		* void sensor_calibration(sensor s): stars the calibration option,
+			calls all the calibration functions.
+		* unsigned int test_calib(sensor s): stars the test sensor option, 
+			and calculate the full scale error between the load value
+			read when the sensor is unloaded and the value stored in 
+			EEPROM memory, finally displays a warning message if the
+			error if bigger than MAXERROR.
+
+confortmed_glcd.c
+
+	Code based on the CCS library HDM64GS12.c
+
+	This file contains drivers for using a Hantronix HDM64GS12 with a KS0108 
+	display controller. The HDM64GS12 is 128 by 64 pixels. The driver treats 
+	the upper left pixel as (0,0). Use #`define FAST_GLCD if the target chip 
+	has at least 1k of RAM to decrease the time it takes to update the 
+	display. glcd_update() must then be called to update the display after 
+	changing the pixel information. See ex_glcd.c for suggested usage.     
+
+	LCD Pin connections:                                         
+	(These can be changed as needed in the following defines).   
+	 * 1: VSS is connected to GND                                
+	 * 2: VDD is connected to +5V                                
+	 * 3: V0  - LCD operating voltage (Constrast adjustment)     
+	 * 4: D/I - Data or Instruction is connected to C2           
+	 * 5: R/W - Read or Write is connected to C4                 
+	 * 6: Enable is connected to C5                              
+	 *7-14: Data Bus 0 to 7 is connected to port D               
+	 *15: Chip Select 1 is connected to C0                       
+	 *16: Chip Select 2 is connected to C1                       
+	 *17: Reset is connected to C6                               
+	 *18: Negative voltage is also connected to the 20k Ohm POT  
+	 *19: Positive voltage for LED back-light is connected to +5V 
+	 *20: Negative voltage for LED back-light is connected to GND
+
+	 Functions:
+
+		* glcd_init(mode): must be called before any other function.          
+       			Mode can be ON or OFF to turn the LCD on or off.  
+                * glcd_pixel(x,y,color): sets the pixel to the given color.          
+			Color can be ON or OFF. 				
+		* glcd_fillScreen(color): fills the entire LCD with the given 
+			color. Color can be ON or OFF.
+		* glcd_update(): write the display data stored in RAM to the 
+			LCD. Only available if FAST_GLCD is defined.             
+
+
+
+
+
+
+
+
+
+	 

@@ -6,6 +6,8 @@ VERSION= v0.0.2
 AUTHOR= Juan Felipe Restrepo <jf.restrepo.rinckoar@gmail.com>
 
 DEVICE=18F452
+#DEVICE=16F877A
+
 
 CC=ccsc
 CCPATH = $(HOME)/.wine/drive_c/Program\ Files/PICC
@@ -15,7 +17,15 @@ LOCAL_PATH=$(HOME)/prog/$(PROJECT)
 LOCAL_LIB=$(LOCAL_PATH)/lib
 LOCAL_INCLUDE=$(LOCAL_PATH);$(LOCAL_PATH)/src
 
-CCFLAGS= +STDOUT +EA -P +DF +LSlst +O8hex +M -J -A +FH I+="$(LOCAL_PATH);$(LOCAL_INCLUDE)"
+ifeq ($(DEVICE),16F877A)
+PICFLAG = +FM 
+endif
+
+ifeq ($(DEVICE),18F452)
+PICFLAG = +FH 
+endif
+
+CCFLAGS= +STDOUT +EA -P +DF +LSlst +O8hex +M -J -A $(PICFLAG) I+="$(LOCAL_PATH);$(LOCAL_INCLUDE)"
 
 SRC=*.c 
 

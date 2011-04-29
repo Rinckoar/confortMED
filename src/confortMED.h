@@ -25,7 +25,7 @@
 #bit  INCR = 	PORTB.0
 #bit  DECR =	PORTB.4
 #bit  OK =	PORTB.5
-//#define FAST_GLCD    			// Try commenting this out to see the differences
+#define FAST_GLCD    			// Try commenting this out to see the differences
 #endif
 
 #define NCH	4			// Number of sensors.
@@ -39,7 +39,7 @@
 #define MAIN_PAUSE	3
 #define MAIN_CALIB	0
 
-#define MAXPRESSURE	40		// Over-pressure threshold value in kPa. 
+#define MAXPRESSURE	0.5		// Over-pressure threshold value in kPa. 
 #define MAXERROR	0.1		// Maximum full scale error allowed to test the sensors.
 
 #define KPA2MMHG	7.50061561	// constant to change Kpa to mmHg.
