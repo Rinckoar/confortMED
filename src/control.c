@@ -146,13 +146,13 @@ void show_values(sensor s,unsigned int units)
 		s[i].oldr=r;
 		
 		if(units == KPA){							// print warning message for over-pressure.
-			if(pressure >= MAXPRESSURE){
+			if((pressure >= MAXPRESSURE) && (r > 6)){
 				sprintf(text,"!");
 				glcd_text57(s[i].rx-5, s[i].ry-7, text,2,OFF);
 			}
 		}
 		else{
-			if(pressure >= MAXPRESSURE*KPA2MMHG){
+			if(pressure >= MAXPRESSURE*KPA2MMHG && (r > 6)){
 				sprintf(text,"!");
 				glcd_text57(s[i].rx-5, s[i].ry-7, text,2,OFF);
 			}

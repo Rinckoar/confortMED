@@ -2,7 +2,7 @@
 # Makeflie for CCS Pic C Compiler
 
 PROJECT= confortMED
-VERSION= v0.0.2
+VERSION= v1.0.0
 AUTHOR= Juan Felipe Restrepo <jf.restrepo.rinckoar@gmail.com>
 
 DEVICE=18F452

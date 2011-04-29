@@ -93,7 +93,7 @@ void Interrupcion_RB()
 //-------------------------------------------	
 static signed int main_init()
 {
-
+	char text[]="";
 	signed int check=0;	
 			
 	port_b_pullups(ON);					
@@ -118,8 +118,25 @@ exit:
 		return check;
 	}
 	else{
+		glcd_init(ON);
 		PORTE=0;
-		delay_ms(1000);
+		sprintf(text,"ConfortMED");
+		glcd_text57(10,5,text,2,1);
+		sprintf(text,"Juan Felipe Restrepo");
+		glcd_text57(6,30,text,1,1);	
+		sprintf(text,"KIRON-EIA");
+		glcd_text57(40,45,text,1,1);
+		sprintf(text,"v.1.0");
+		glcd_text57(96,56,text,1,1);
+#ifdef FAST_GLCD
+		glcd_update();
+#endif	
+		delay_ms(5000);
+		glcd_fillScreen(OFF);
+#ifdef FAST_GLCD
+		glcd_update();
+#endif	
+		glcd_init(OFF);
 		enable_interrupts(int_RB);				
 		ext_int_edge(L_TO_H);	
 		enable_interrupts(int_EXT);
@@ -157,8 +174,14 @@ static void main_error(int er)
 				break;
 			}
 	}
+#ifdef FAST_GLCD
+	glcd_update();
+#endif	
 	delay_ms(5000);
 	glcd_fillScreen(OFF);
+#ifdef FAST_GLCD
+	glcd_update();
+#endif	
 }
 
 //		MAIN 
