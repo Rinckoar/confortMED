@@ -39,7 +39,7 @@ The CONFORTMED package contains 8 files.
 		operate with the GLCD.
 	7. Makefile
 		File to compile the code in UNIX systems.
-	8. README
+	8. UserManual
 		User Manual.
 
 confortmed.c
